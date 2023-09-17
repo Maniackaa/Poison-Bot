@@ -5,4 +5,5 @@ LEXICON_COMMANDS_RU: dict[str, str] = {
     }
 LEXICON_RU = {
     'start_text': 'Добрый день! ',
+    'hello_msg': 'Добрый день! Это hello_msg'
 }
