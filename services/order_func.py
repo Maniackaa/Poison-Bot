@@ -96,16 +96,16 @@ def get_case_text():
     else:
         text = f'Идет формирование заказа № {case.id}…\n\n'
     if orders_count > 0:
-        text += f'<b>({MAX_ORDERS_COUNT})__</b>'
+        text += f'<u><b>({MAX_ORDERS_COUNT})__</b></u>'
     else:
         text += f'{MAX_ORDERS_COUNT}___'
     for i in range(MAX_ORDERS_COUNT - 2):
         if i < orders_count - 1:
-            text += f'<b>({MAX_ORDERS_COUNT - i - 1})___</b>'
+            text += f'<u><b>({MAX_ORDERS_COUNT - i - 1})___</b></u>'
         else:
             text += f'{MAX_ORDERS_COUNT - i - 1}___'
     if orders_count == MAX_ORDERS_COUNT:
-        text += f'<b>(0)</b>'
+        text += f'<u><b>(0)</b></u>'
     else:
         text += '1'
 
