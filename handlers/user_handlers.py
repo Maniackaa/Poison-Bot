@@ -99,7 +99,6 @@ async def stat(callback: CallbackQuery, state: FSMContext, bot: Bot):
     print(type(group))
 
 
-
 @router.callback_query()
 async def stat(callback: CallbackQuery, state: FSMContext, bot: Bot):
     print('echo')
