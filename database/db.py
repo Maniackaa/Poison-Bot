@@ -17,8 +17,8 @@ logger, err_log = get_my_loggers()
 metadata = MetaData()
 db_url = f"postgresql+psycopg2://{conf.db.db_user}:{conf.db.db_password}@{conf.db.db_host}:{conf.db.db_port}/{conf.db.database}"
 # engine = create_engine(db_url, echo=False, max_overflow=-1)
-engine = create_engine(db_url, echo=False)
-
+# engine = create_engine(db_url, echo=False)
+engine = create_engine(f"sqlite:///../db.sqlite3", echo=False)
 
 Session = sessionmaker(bind=engine)
 
