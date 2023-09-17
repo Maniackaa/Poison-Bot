@@ -17,7 +17,7 @@ logger, err_log = get_my_loggers()
 
 def check_user(tg_id: int | str) -> User:
     """Возвращает найденного пользователя по tg_id"""
-    # logger.debug(f'Ищем юзера {tg_id}')
+    logger.debug(f'Ищем юзера {tg_id}')
     with Session() as session:
         user: User = session.query(User).filter(User.tg_id == str(tg_id)).first()
         # logger.debug(f'Результат: {user}')
@@ -29,7 +29,7 @@ def get_or_create_user(user, refferal=None) -> Optional[User]:
     try:
         old_user = check_user(user.id)
         if old_user:
-            logger.debug('Пользователь есть в базе')
+            logger.debug(f'Пользователь {old_user} есть в базе')
             return old_user
         # Создание нового пользователя
         logger.debug('Добавляем пользователя')

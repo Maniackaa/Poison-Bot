@@ -5,10 +5,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 
 kb1 = {
-    'Остановить мониторинг': 'stop',
-    'Сформировать статистику': 'stat',
-    'Ваши каналы': 'channels',
-    'Сгенерировать новый ключ': 'new_secret',
+    # 'Мои заказы': 'my_orders',
+    'Удалить заказ': 'delete_order',
 }
 
 

@@ -10,15 +10,16 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import sessionmaker
 
-from config_data.conf import conf, tz, get_my_loggers
-
+from config_data.conf import conf, tz, get_my_loggers, BASE_DIR
 
 logger, err_log = get_my_loggers()
 metadata = MetaData()
 db_url = f"postgresql+psycopg2://{conf.db.db_user}:{conf.db.db_password}@{conf.db.db_host}:{conf.db.db_port}/{conf.db.database}"
 # engine = create_engine(db_url, echo=False, max_overflow=-1)
-# engine = create_engine(db_url, echo=False)
-engine = create_engine(f"sqlite:///../db.sqlite3", echo=False)
+engine = create_engine(db_url, echo=False)
+
+# db_path = BASE_DIR / 'db.sqlite3'
+# engine = create_engine(f"sqlite:///{db_path}", echo=False)
 
 Session = sessionmaker(bind=engine)
 

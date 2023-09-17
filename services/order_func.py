@@ -92,9 +92,9 @@ def get_case_text():
         orders_count = 0
     logger.debug(f'orders_count: {orders_count}')
     if orders_count >= MAX_ORDERS_COUNT:
-        text = 'Заказ сформирован'
+        text = f'Поздравляем! Заказ  № {case.id} сформирован! Закупка товаров по списку будет осуществлена в течении 24 часов! После получения всех 10 заказов на склад ТК в Китае, доставка во Вьетнам займет 3-4 дня!\n\n'
     else:
-        text = 'Идет формирование заказа…\n\n'
+        text = f'Идет формирование заказа № {case.id}…\n\n'
     if orders_count > 0:
         text += f'<b>({MAX_ORDERS_COUNT})__</b>'
     else:
@@ -113,7 +113,7 @@ def get_case_text():
     if case:
         for num, order in enumerate(case.orders, 1):
             user = order.user
-            text += f'{num}. {user.username} {user.full_name} {order.link}\n'
+            text += f'{num}. @{user.username} {user.full_name} {order.link}\n'
     return text
 
 # x = get_case_text()
@@ -128,6 +128,47 @@ def get_case_from_order(order: Order):
         case = order.case
         logger.debug(case)
         return case
+
+
+def get_case_from_order_id(order_id: int) -> Case:
+    session = Session()
+    logger.debug(f'Ищем case по order_id {order_id}')
+    with session:
+        order = select(Order).filter(Order.id == order_id)
+        order = session.execute(order).unique().scalars().one_or_none()
+        if order:
+            logger.debug(f'order: {order}')
+            case = order.case
+            logger.debug(f'case: {case}')
+            return case
+
+
+def get_my_orders(tg_id):
+    user: User = check_user(tg_id)
+    return user.orders
+
+
+def delete_order(order_id) -> bool:
+    try:
+        logger.debug(f'Удаление заказа {order_id}')
+        session = Session()
+        with session:
+            order = select(Order).filter(Order.id == order_id)
+            order = session.execute(order).unique().scalars().one_or_none()
+            if order and order.case.status != 2:
+                case = order.case
+                logger.debug(f'Заказ найден: {order}')
+                session.delete(order)
+                session.commit()
+                logger.debug(f'Заказ удален')
+
+                return True
+            return False
+
+
+
+    except Exception as err:
+        logger.error(f'Ошибка при удалении заказа: err')
 
 
 # my_case = get_or_create_case()
