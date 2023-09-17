@@ -1,0 +1,12 @@
+[Unit]
+Description=Poison-Bot
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/Poison-Bot
+ExecStart=/root/Poison-Bot/venv/bin/python3 /root/Poison-Bot/main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
