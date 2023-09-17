@@ -6,7 +6,8 @@ from aiogram.types import CallbackQuery, Message, ChatInviteLink, \
     InlineKeyboardButton, ChatMemberUpdated
 
 
-from config_data.conf import get_my_loggers, conf
+from config_data.conf import get_my_loggers, conf, BASE_DIR
+from lexicon.lexicon import LEXICON_RU
 from services.db_func import get_or_create_user
 
 logger, err_log = get_my_loggers()
@@ -33,7 +34,7 @@ async def user_kick(event: ChatMemberUpdated, bot: Bot):
 
 @router.chat_member(ChatMemberUpdatedFilter(member_status_changed=MEMBER))
 async def user_join(event: ChatMemberUpdated, bot: Bot):
-    GROUP_ID = conf.tg_bot.GROUP_ID
+    # GROUP_ID = conf.tg_bot.GROUP_ID
     logger.debug('USER MEMBER')
     try:
         chat = event.chat
@@ -42,7 +43,26 @@ async def user_join(event: ChatMemberUpdated, bot: Bot):
         logger.info(f'Юзер {member.username} {member.id} присоединился к каналу {chat.id} {chat.title} ')
         user = get_or_create_user(member)
         logger.debug(f'user: {user}')
-        await bot.send_message(chat_id=GROUP_ID, text='Приветсвенное сообщение...')
+        try:
+            with open(BASE_DIR / 'msg.txt', 'r') as file:
+                old_id = file.read().strip()
+            if old_id:
+                old_id = int(old_id)
+                await bot.delete_message(chat_id=event.chat.id, message_id=old_id)
+        except Exception as err:
+            logger.error(err)
+        with open(BASE_DIR / 'login.txt', 'r') as file:
+            logins = file.read().split('\n')
+        if event.from_user.username in logins:
+            logger.debug('Не отправляем ссобщение')
+            pass
+        else:
+            logger.debug(f'Отпраялем сообщение - добавлен {member}')
+            msg = await bot.send_message(chat_id=event.chat.id,
+                                         text=LEXICON_RU['hello_msg'].format(
+                                             member.first_name or member.user.username))
+            with open(BASE_DIR / 'msg.txt', 'w') as file:
+                file.write(str(msg.message_id))
 
 
     except Exception as err:
