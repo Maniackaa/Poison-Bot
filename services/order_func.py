@@ -102,7 +102,7 @@ def get_case_text():
     for i in range(MAX_ORDERS_COUNT - 2):
         if i < orders_count - 1:
             # text += f'<u><b>({MAX_ORDERS_COUNT - i - 1})___</b></u>'
-            text += f'👟__'
+            text += f'👟_'
         else:
             text += f'{MAX_ORDERS_COUNT - i - 1}__'
     if orders_count == MAX_ORDERS_COUNT:
