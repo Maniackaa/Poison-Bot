@@ -57,7 +57,7 @@ async def as_member(event: ChatMemberUpdated, bot: Bot):
         chat = event.chat
         owner = event.from_user
         logger.info(f'Бот добавлен в канал {chat.id} {chat.title} как MEMBER  пользователем {owner.username} {owner.id}')
-
+        await bot.send_message(f'Бот добавлен в канал {chat.id} {chat.title} как MEMBER  пользователем {owner.username} {owner.id}')
     except Exception as err:
         logger.error(err)
         err_log.error(err, exc_info=True)

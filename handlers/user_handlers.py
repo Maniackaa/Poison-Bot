@@ -135,6 +135,7 @@ async def delete(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await callback.message.answer('Заказов нет')
     await callback.message.delete()
 
+
 @router.callback_query(F.data.startswith('delete_order_'))
 async def delete(callback: CallbackQuery, state: FSMContext, bot: Bot):
     await callback.message.delete()
