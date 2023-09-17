@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, Message, ChatInviteLink, \
     InlineKeyboardButton, ChatMemberUpdated
 
 
-from config_data.conf import get_my_loggers
+from config_data.conf import get_my_loggers, conf
 from services.db_func import get_or_create_user
 
 logger, err_log = get_my_loggers()
@@ -33,6 +33,7 @@ async def user_kick(event: ChatMemberUpdated, bot: Bot):
 
 @router.chat_member(ChatMemberUpdatedFilter(member_status_changed=MEMBER))
 async def user_join(event: ChatMemberUpdated, bot: Bot):
+    GROUP_ID = conf.tg_bot.GROUP_ID
     logger.debug('USER MEMBER')
     try:
         chat = event.chat
@@ -41,6 +42,7 @@ async def user_join(event: ChatMemberUpdated, bot: Bot):
         logger.info(f'Юзер {member.username} {member.id} присоединился к каналу {chat.id} {chat.title} ')
         user = get_or_create_user(member)
         logger.debug(f'user: {user}')
+        await bot.send_message(chat_id=GROUP_ID, text='Приветсвенное сообщение...')
 
 
     except Exception as err:
