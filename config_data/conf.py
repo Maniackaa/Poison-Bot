@@ -98,7 +98,7 @@ class Config:
     logic: Logic
 
 
-def load_config(path: str | None) -> Config:
+def load_config(path) -> Config:
     env: Env = Env()
     env.read_env(path)
 
