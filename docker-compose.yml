@@ -1,0 +1,47 @@
+version: '3'
+
+volumes:
+  pg_data:
+  pgadmin-data:
+
+services:
+  db_postgres:
+    container_name: db_postgres_poison
+    image: postgres:14-alpine
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+    restart: unless-stopped
+
+
+  pgadmin:
+    container_name: pgadmin_container_poison
+    image: dpage/pgadmin4:7.6
+    env_file: .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: $PGADMIN_DEFAULT_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_DEFAULT_PASSWORD
+
+    depends_on:
+      - db_postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5051:80"
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+
+  poison_bot:
+    restart: always
+    build: .
+    env_file: .env
+    depends_on:
+      - db_postgres
+    volumes:
+      - ./logs:/app/logs/
