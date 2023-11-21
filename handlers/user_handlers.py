@@ -56,6 +56,7 @@ async def process_start_command(message: Message, state: FSMContext, bot: Bot):
 
 
 def response_order_url(message: Message) -> str:
+    print(message)
     domen = 'dw4.co'
     order_url = ''
     if message.entities:
@@ -70,6 +71,7 @@ def response_order_url(message: Message) -> str:
 
 @router.message(IsPrivate())
 async def order(message: Message, state: FSMContext, bot: Bot):
+    print(message)
     order_url = response_order_url(message)
     if order_url:
         await state.set_state(FSMOrder.order)
@@ -81,7 +83,8 @@ async def order(message: Message, state: FSMContext, bot: Bot):
 async def refresh_order_message(bot: Bot, case):
     GROUP_ID = conf.tg_bot.GROUP_ID
     text = get_case_text()
-    msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
+    # msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
+    msg: Message = await bot.send_video(GROUP_ID, video='BAACAgIAAxkBAAIC2GVcUAYX7lNQmmr2yXCs2E2qRrrWAAL-MwACVwLpSptg2XddHo5OMwQ')
     msg_url = msg.get_url(force_private=True)
     old_msg_id = case.msg_id
     if old_msg_id:
@@ -104,7 +107,9 @@ async def stat(callback: CallbackQuery, state: FSMContext, bot: Bot):
     # Действия в группе
     GROUP_ID = conf.tg_bot.GROUP_ID
     text = get_case_text()
-    msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
+    # msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
+    msg: Message = await bot.send_video(GROUP_ID,
+                                        video='BAACAgIAAxkBAAIC2GVcUAYX7lNQmmr2yXCs2E2qRrrWAAL-MwACVwLpSptg2XddHo5OMwQ', caption=text)
     msg_url = msg.get_url(force_private=True)
     await callback.message.answer(text=f'Ссылка на заказ: {msg_url}')
     case = get_case_from_order(new_order)
@@ -133,7 +138,6 @@ async def delete(callback: CallbackQuery, state: FSMContext, bot: Bot):
         kb['Отменить'] = 'cancel'
         await callback.message.answer(text=text, reply_markup=custom_kb(1, kb))
     await callback.message.answer('Заказов нет')
-    await callback.message.delete()
 
 
 @router.callback_query(F.data.startswith('delete_order_'))

@@ -57,7 +57,7 @@ async def user_join(event: ChatMemberUpdated, bot: Bot):
             logger.debug('Не отправляем ссобщение')
             pass
         else:
-            logger.debug(f'Отпраялем сообщение - добавлен {member}')
+            logger.debug(f'Отправляем сообщение - добавлен {member}')
             msg = await bot.send_message(chat_id=event.chat.id,
                                          text=LEXICON_RU['hello_msg'].format(
                                              member.first_name or member.user.username))
