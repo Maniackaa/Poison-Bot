@@ -57,7 +57,7 @@ class Order(Base):
     text: Mapped[str] = mapped_column(String(500))
     link: Mapped[str] = mapped_column(String(100))
     msg_link: Mapped[str] = mapped_column(String(100), nullable=True)
-    case: Mapped["Case"] = relationship(back_populates="orders", lazy='subquery')
+    case: Mapped["Case"] = relationship(back_populates="orders", lazy='joined')
     user: Mapped["User"] = relationship(back_populates="orders", lazy='joined')
 
     def __repr__(self):

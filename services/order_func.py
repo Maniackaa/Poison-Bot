@@ -83,39 +83,42 @@ def get_active_case():
 
 
 def get_case_text():
-    logger.debug('Готовим текст.')
-    case: Case = get_active_case()
-    logger.debug(f'case: {case}')
-    if case:
-        orders_count = len(case.orders)
-    else:
-        orders_count = 0
-    logger.debug(f'orders_count: {orders_count}')
-    if orders_count >= MAX_ORDERS_COUNT:
-        text = f'Поздравляем! Заказ  № {case.id} сформирован! Закупка товаров по списку будет осуществлена в течении 24 часов! После получения всех 11 заказов на склад ТК в Китае, доставка во Вьетнам займет 3-4 дня!\n\n'
-    else:
-        text = f'Идет формирование заказа № {case.id}…\n\n'
-    if orders_count > 0:
-        text += f'👟_'
-    else:
-        text += f'{MAX_ORDERS_COUNT}___'
-    for i in range(MAX_ORDERS_COUNT - 2):
-        if i < orders_count - 1:
-            # text += f'<u><b>({MAX_ORDERS_COUNT - i - 1})___</b></u>'
+    try:
+        logger.debug('Готовим текст.')
+        case: Case = get_active_case()
+        logger.debug(f'case: {case}')
+        if case:
+            orders_count = len(case.orders)
+        else:
+            orders_count = 0
+        logger.debug(f'orders_count: {orders_count}')
+        if orders_count >= MAX_ORDERS_COUNT:
+            text = f'Поздравляем! Заказ  № {case.id} сформирован! Закупка товаров по списку будет осуществлена в течении 24 часов! После получения всех 11 заказов на склад ТК в Китае, доставка во Вьетнам займет 3-4 дня!\n\n'
+        else:
+            text = f'Идет формирование заказа № {case.id}…\n\n'
+        if orders_count > 0:
             text += f'👟_'
         else:
-            text += f'{MAX_ORDERS_COUNT - i - 1}__'
-    if orders_count == MAX_ORDERS_COUNT:
-        text += f'👟'
-    else:
-        text += '1'
+            text += f'{MAX_ORDERS_COUNT}___'
+        for i in range(MAX_ORDERS_COUNT - 2):
+            if i < orders_count - 1:
+                # text += f'<u><b>({MAX_ORDERS_COUNT - i - 1})___</b></u>'
+                text += f'👟_'
+            else:
+                text += f'{MAX_ORDERS_COUNT - i - 1}__'
+        if orders_count == MAX_ORDERS_COUNT:
+            text += f'👟'
+        else:
+            text += '1'
 
-    text += f'\n\nОсталось <b>{MAX_ORDERS_COUNT - orders_count}</b> заказов\n\n'
-    if case:
-        for num, order in enumerate(case.orders, 1):
-            user = order.user
-            text += f'{num}. @{user.username} {user.full_name} {order.link}\n'
-    return text
+        text += f'\n\nОсталось <b>{MAX_ORDERS_COUNT - orders_count}</b> заказов\n\n'
+        if case:
+            for num, order in enumerate(case.orders, 1):
+                user = order.user
+                text += f'{num}. @{user.username} {user.full_name} {order.link}\n'
+        return text
+    except Exception as err:
+        logger.error(err, exc_info=True)
 
 # x = get_case_text()
 # print(x)
@@ -140,7 +143,7 @@ def get_case_from_order_id(order_id: int) -> Case:
         if order:
             logger.debug(f'order: {order}')
             case = order.case
-            logger.debug(f'case: {case}')
+            logger.debug(f'case: {case}. case.nsg_id: {case.msg_id}')
             return case
 
 
