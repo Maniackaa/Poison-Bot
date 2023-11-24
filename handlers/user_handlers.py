@@ -17,7 +17,7 @@ from lexicon.lexicon import LEXICON_RU
 
 from services.db_func import get_or_create_user
 from services.order_func import create_order, get_case_text, get_case_from_order, get_my_orders, delete_order, \
-    get_case_from_order_id
+    get_case_from_order_id, get_active_case
 
 logger, err_log = get_my_loggers()
 
@@ -80,16 +80,17 @@ async def order(message: Message, state: FSMContext, bot: Bot):
         await message.answer(text=text, reply_markup=yes_no_kb)
 
 
-async def refresh_order_message(bot: Bot, case):
+async def refresh_order_message(bot: Bot, case_id, case_msg_id):
     try:
         GROUP_ID = conf.tg_bot.GROUP_ID
         text = get_case_text()
         # msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
         msg: Message = await bot.send_video(GROUP_ID, video='BAACAgIAAxkBAAIC2GVcUAYX7lNQmmr2yXCs2E2qRrrWAAL-MwACVwLpSptg2XddHo5OMwQ', caption=text)
         msg_url = msg.get_url(force_private=True)
-        old_msg_id = case.msg_id
+        old_msg_id = case_msg_id
         if old_msg_id:
             await bot.delete_message(chat_id=GROUP_ID, message_id=old_msg_id)
+        case = get_active_case()
         case.set('msg_id', msg.message_id)
     except Exception as err:
         logger.error(err, exc_info=True)
@@ -113,13 +114,21 @@ async def stat(callback: CallbackQuery, state: FSMContext, bot: Bot):
     # msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
     msg: Message = await bot.send_video(GROUP_ID,
                                         video='BAACAgIAAxkBAAIC2GVcUAYX7lNQmmr2yXCs2E2qRrrWAAL-MwACVwLpSptg2XddHo5OMwQ', caption=text)
+    logger.debug(f'Новое msg_id: {msg.message_id}')
     msg_url = msg.get_url(force_private=True)
+    logger.debug(str(msg_url))
     await callback.message.answer(text=f'Ссылка на заказ: {msg_url}')
     case = get_case_from_order(new_order)
+    logger.debug(f'Добавлено с case: {case}. Старый msg_id в case: {case.msg_id}')
     old_msg_id = case.msg_id
-    if old_msg_id:
-        await bot.delete_message(chat_id=GROUP_ID, message_id=old_msg_id)
+    try:
+        if old_msg_id:
+            logger.debug(f'Удаляем сообщение {old_msg_id}')
+            await bot.delete_message(chat_id=GROUP_ID, message_id=int(old_msg_id))
+    except Exception as err:
+        logger.debug(f'Сообщение {old_msg_id} не удалено')
     case.set('msg_id', msg.message_id)
+    logger.debug(f'Новое msg.id сохранено: {msg.message_id}')
 
     group = await bot.get_chat(chat_id=GROUP_ID)
     # print(group)
@@ -151,13 +160,15 @@ async def delete(callback: CallbackQuery, state: FSMContext, bot: Bot):
 
     logger.debug(f'Удаялем заказ {order_id}')
     case = get_case_from_order_id(order_id)
+    case_id = case.id
+    case_msg_id = case.msg_id
     logger.debug(f'case:{case}. ')
     is_delete = delete_order(order_id)
     if is_delete:
         await callback.message.answer('Ваш заказ удален')
         # Обновить сообщение
         logger.debug('Обновить сообщение')
-        await refresh_order_message(bot, case)
+        await refresh_order_message(bot, case_id, case_msg_id)
         logger.debug('Обновлено')
 
     else:
