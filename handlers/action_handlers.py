@@ -40,6 +40,8 @@ async def user_join(event: ChatMemberUpdated, bot: Bot):
     logger.debug('USER MEMBER')
     try:
         chat = event.chat
+        if chat.id == -1001829561831:
+            return
         logger.debug(f'{chat.id} {chat.title}')
         member = event.new_chat_member.user
         logger.debug(f'member: {member}')
