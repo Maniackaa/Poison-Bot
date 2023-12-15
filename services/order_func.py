@@ -8,7 +8,7 @@ from services.db_func import check_user
 
 logger, err_log = get_my_loggers()
 
-MAX_ORDERS_COUNT = 11
+MAX_ORDERS_COUNT = 10
 
 
 def get_or_create_case():
@@ -95,7 +95,7 @@ def get_case_text():
         if orders_count >= MAX_ORDERS_COUNT:
             text = f'Поздравляем! Заказ  № {case.id} сформирован! Закупка товаров по списку будет осуществлена в течении 24 часов! После получения всех 11 заказов на склад ТК в Китае, доставка во Вьетнам займет 3-4 дня!\n\n'
         else:
-            text = f'Идет формирование заказа № {case.id}…\n\n'
+            text = f'Идет формирование груза № {case.id}…\n\n'
         if orders_count > 0:
             text += f'👟_'
         else:
@@ -111,7 +111,7 @@ def get_case_text():
         else:
             text += '1'
 
-        text += f'\n\nОсталось <b>{MAX_ORDERS_COUNT - orders_count}</b> заказов\n\n'
+        text += f'\n\nОсталось заказов: <b>{MAX_ORDERS_COUNT - orders_count}</b>\n\n'
         if case:
             for num, order in enumerate(case.orders, 1):
                 user = order.user

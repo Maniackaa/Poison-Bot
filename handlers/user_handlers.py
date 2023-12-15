@@ -69,6 +69,13 @@ def response_order_url(message: Message) -> str:
     return order_url
     
 
+@router.message(F.video)
+async def search(message: Message, state: FSMContext, bot: Bot):
+    logger.debug(message.video.file_id)
+    file_id = message.video.file_id
+    await message.answer(file_id)
+
+
 @router.message(IsPrivate())
 async def order(message: Message, state: FSMContext, bot: Bot):
     # print(message)
@@ -85,7 +92,7 @@ async def refresh_order_message(bot: Bot, case_id, case_msg_id):
         GROUP_ID = conf.tg_bot.GROUP_ID
         text = get_case_text()
         # msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
-        msg: Message = await bot.send_video(GROUP_ID, video='BAACAgIAAxkBAAIC2GVcUAYX7lNQmmr2yXCs2E2qRrrWAAL-MwACVwLpSptg2XddHo5OMwQ', caption=text)
+        msg: Message = await bot.send_video(GROUP_ID, video='BAACAgIAAxkBAAIEh2VwCPUwpNu-lInHIpinzHqTChnAAAJeRQACy32AS1b_nL9mZRRpMwQ', caption=text)
         msg_url = msg.get_url(force_private=True)
         old_msg_id = case_msg_id
         if old_msg_id:
@@ -113,7 +120,7 @@ async def stat(callback: CallbackQuery, state: FSMContext, bot: Bot):
     text = get_case_text()
     # msg: Message = await bot.send_message(chat_id=GROUP_ID, text=text)
     msg: Message = await bot.send_video(GROUP_ID,
-                                        video='BAACAgIAAxkBAAIC2GVcUAYX7lNQmmr2yXCs2E2qRrrWAAL-MwACVwLpSptg2XddHo5OMwQ', caption=text)
+                                        video='BAACAgIAAxkBAAIEh2VwCPUwpNu-lInHIpinzHqTChnAAAJeRQACy32AS1b_nL9mZRRpMwQ', caption=text)
     logger.debug(f'Новое msg_id: {msg.message_id}')
     msg_url = msg.get_url(force_private=True)
     logger.debug(str(msg_url))
@@ -175,15 +182,13 @@ async def delete(callback: CallbackQuery, state: FSMContext, bot: Bot):
         await callback.message.answer('Произошла ошибка при удалении. Возможно заказ уже сформирован')
 
 
+# @router.callback_query()
+# async def stat(callback: CallbackQuery, state: FSMContext, bot: Bot):
+#     print('echo')
+#     print(callback.data)
+#
+#
+# @router.message()
+# async def order(message: Message, state: FSMContext, bot: Bot):
+#     logger.debug(message)
 
-
-
-@router.callback_query()
-async def stat(callback: CallbackQuery, state: FSMContext, bot: Bot):
-    print('echo')
-    print(callback.data)
-
-
-@router.message()
-async def order(message: Message, state: FSMContext, bot: Bot):
-    print('echo message')

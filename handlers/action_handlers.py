@@ -1,7 +1,7 @@
 import datetime
 
 from aiogram import Router, Bot, F
-from aiogram.filters import Command, ChatMemberUpdatedFilter, MEMBER, LEFT, ADMINISTRATOR, KICKED
+from aiogram.filters import Command, ChatMemberUpdatedFilter, MEMBER, LEFT, ADMINISTRATOR, KICKED, CREATOR
 from aiogram.types import CallbackQuery, Message, ChatInviteLink, \
     InlineKeyboardButton, ChatMemberUpdated
 
@@ -32,15 +32,19 @@ async def user_kick(event: ChatMemberUpdated, bot: Bot):
         raise err
 
 
+@router.chat_member(ChatMemberUpdatedFilter(member_status_changed=CREATOR))
+@router.chat_member(ChatMemberUpdatedFilter(member_status_changed=ADMINISTRATOR))
 @router.chat_member(ChatMemberUpdatedFilter(member_status_changed=MEMBER))
 async def user_join(event: ChatMemberUpdated, bot: Bot):
     # GROUP_ID = conf.tg_bot.GROUP_ID
     logger.debug('USER MEMBER')
     try:
         chat = event.chat
+        logger.debug(f'{chat.id} {chat.title}')
         member = event.new_chat_member.user
         logger.debug(f'member: {member}')
         logger.info(f'Юзер {member.username} {member.id} присоединился к каналу {chat.id} {chat.title} ')
+
         user = get_or_create_user(member)
         logger.debug(f'user: {user}')
         try:
@@ -63,7 +67,6 @@ async def user_join(event: ChatMemberUpdated, bot: Bot):
                                              member.first_name or member.user.username))
             with open(BASE_DIR / 'msg.txt', 'w') as file:
                 file.write(str(msg.message_id))
-
 
     except Exception as err:
         logger.error(err)
@@ -113,3 +116,11 @@ async def as_admin(event: ChatMemberUpdated, bot: Bot):
         logger.error(err)
         err_log.error(err, exc_info=True)
         raise err
+
+
+@router.message()
+async def echo(message: Message, bot: Bot):
+    logger.debug('echo', message.text)
+    if message.chat.id == -1001829561831 and message.new_chat_members:
+        logger.debug('Удаляем сообщение')
+        await message.delete()
