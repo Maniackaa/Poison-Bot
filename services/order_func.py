@@ -29,7 +29,7 @@ def create_order(user: User, text: str, link: str) -> Order:
 
 def get_order_text(user: User, order: Order) -> str:
     """Текст для сообщения о заказе (в группу и пользователю)."""
-    first_name = user.first_name or user.username or 'пользователь'
+    first_name = (user.first_name or user.username or 'пользователь').strip().capitalize()
     username = user.username or '—'
     return ORDER_SUCCESS_TEMPLATE.format(
         first_name=first_name,
