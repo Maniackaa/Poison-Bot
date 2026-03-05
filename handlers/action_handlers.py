@@ -65,12 +65,13 @@ async def user_join(event: ChatMemberUpdated, bot: Bot):
         else:
             logger.debug(f'Отправляем сообщение - добавлен {member}')
             first_name = (member.first_name or member.username or 'друг').strip().capitalize()
-            caption = LEXICON_RU['hello_msg'].format(first_name=first_name)
-            msg = await bot.send_video(
-                chat_id=event.chat.id,
-                video=conf.tg_bot.WELCOME_VIDEO_FILE_ID,
-                caption=caption,
-            )
+            text = LEXICON_RU['hello_msg'].format(first_name=first_name)
+            # msg = await bot.send_video(
+            #     chat_id=event.chat.id,
+            #     video=conf.tg_bot.WELCOME_VIDEO_FILE_ID,
+            #     caption=caption,
+            # )
+            msg = await bot.send_message(chat_id=event.chat.id, text=text)
             with open(BASE_DIR / 'msg.txt', 'w') as file:
                 file.write(str(msg.message_id))
 

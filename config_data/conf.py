@@ -85,7 +85,7 @@ class TgBot:
     TIMEZONE: pytz.timezone
     GROUP_ID: int
     ORDER_VIDEO_FILE_ID: str = 'BAACAgIAAxkBAAIEh2VwCPUwpNu-lInHIpinzHqTChnAAAJeRQACy32AS1b_nL9mZRRpMwQ'
-    WELCOME_VIDEO_FILE_ID: str = 'BAACAgIAAxkBAAIHwmmoaSOd0NqYQs1FYAzzmf8cHKnXAAI-mwAC_NlBSXB4bbCn4gWOOgQ'
+    WELCOME_VIDEO_FILE_ID: str = 'BAACAgIAAxkBAAIH0WmogxgiW5dpL0FIyBQ_3pToGT4ZAAKMnAAC_NlBSYiXkPHeAlFOOgQ'
 
 
 @dataclass
@@ -108,8 +108,8 @@ def load_config(path) -> Config:
                                admin_ids=list(map(str, env.list('ADMIN_IDS'))),
                                TIMEZONE=pytz.timezone(env('TIMEZONE')),
                                GROUP_ID=int(env('GROUP_ID')),
-                               ORDER_VIDEO_FILE_ID=env('ORDER_VIDEO_FILE_ID', 'BAACAgIAAxkBAAIEh2VwCPUwpNu-lInHIpinzHqTChnAAAJeRQACy32AS1b_nL9mZRRpMwQ'),
-                               WELCOME_VIDEO_FILE_ID=env('WELCOME_VIDEO_FILE_ID', 'BAACAgIAAxkBAAIEh2VwCPUwpNu-lInHIpinzHqTChnAAAJeRQACy32AS1b_nL9mZRRpMwQ'),
+                               ORDER_VIDEO_FILE_ID=env('ORDER_VIDEO_FILE_ID'),
+                               WELCOME_VIDEO_FILE_ID=env('WELCOME_VIDEO_FILE_ID'),
                                ),
                   db=PostgresConfig(
                       database=env('POSTGRES_DB'),

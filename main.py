@@ -21,6 +21,8 @@ async def main():
         if admins:
             await bot.send_message(
                 conf.tg_bot.admin_ids[0], f'Бот запущен.')
+            print(conf.tg_bot.WELCOME_VIDEO_FILE_ID)
+            print(conf.tg_bot.ORDER_VIDEO_FILE_ID)
     except:
         err_log.critical(f'Не могу отравить сообщение {conf.tg_bot.admin_ids[0]}')
 
